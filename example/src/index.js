@@ -3,10 +3,13 @@ import ReactDOM from 'react-dom';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import javascript from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import gist from 'react-syntax-highlighter/dist/esm/styles/hljs/github-gist';
+import { Input } from 'reactstrap';
 
 import IntlCurrencyInput from 'react-intl-currency-input';
 
 import './index.css';
+import '../node_modules/bootstrap/dist/css/bootstrap.css';
+
 import * as serviceWorker from './serviceWorker';
 
 SyntaxHighlighter.registerLanguage('javascript', javascript);
@@ -52,12 +55,15 @@ const BrlCurrencyInput = () => {
 
   return (
     <div>
-      <IntlCurrencyInput currency='BRL' config={currencyConfig}
+      <IntlCurrencyInput 
+        currency='BRL' 
+        config={currencyConfig}
         defaultValue={defaultValue}
         onChange={handleChange}
         autoFocus={true}
         autoSelect={true}
         max={maxValue}
+        customComponent={Input}
       />
       <p>Value: <strong>{value}</strong></p>
       <p>Masked Value: <strong>{maskedValue}</strong></p>
