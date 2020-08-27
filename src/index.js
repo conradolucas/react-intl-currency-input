@@ -17,7 +17,45 @@ const defaultConfig = {
   },
 };
 
-const IntlCurrencyInput = ({
+const propTypes = {
+  defaultValue: number,
+  value: number,
+  max: number,
+  customComponent: func,
+  component: node.isRequired,
+  currency: string.isRequired,
+  config: shape().isRequired,
+  autoFocus: bool.isRequired,
+  autoSelect: bool.isRequired,
+  autoReset: bool.isRequired,
+  onChange: func.isRequired,
+  onBlur: func.isRequired,
+  onFocus: func.isRequired,
+  onKeyPress: func.isRequired,
+}
+
+const defaultProps = {
+  component: 'input',
+  currency: 'USD',
+  value: 0,
+  config: defaultConfig,
+  autoFocus: false,
+  autoSelect: false,
+  autoReset: false,
+  onChange: f => f,
+  onBlur: f => f,
+  onFocus: f => f,
+  onKeyPress: f => f,
+}
+
+function omit(obj, keyMaps) {
+  const filteredObj = {};
+  Object.keys(obj).forEach((key) => {
+    if (!keyMaps[key]) filteredObj[key] = obj[key]
+  });
+  return filteredObj;
+}
+function IntlCurrencyInput({
   component: InputComponent,
   value,
   defaultValue,
@@ -31,8 +69,9 @@ const IntlCurrencyInput = ({
   onBlur,
   onFocus,
   onKeyPress,
+  customComponent,
   ...otherProps
-}) => {
+}) {
   const inputRef = useCallback(node => {
     const isActive = node === document.activeElement;
 
@@ -150,47 +189,37 @@ const IntlCurrencyInput = ({
     setMaskedValue(maskedValue);
   }, [currency, value, defaultValue, config]);
 
+
+  const [ props ] = arguments;
+  const _otherProps = omit(props, propTypes);
+
+  const inputProps = Object.assign({}, _otherProps, {
+    ref: inputRef,
+    value: maskedValue,
+    onChange: handleChange,
+    onBlur: handleBlur,
+    onFocus: handleFocus,
+    onKeyUp: handleKeyUp,
+  })
+  
+  if (customComponent) {
+    const CustomComponent = customComponent;
+    return (
+      <CustomComponent
+        {...inputProps}
+      />
+    )
+  }
+
   return (
     <InputComponent
-      {...otherProps}
-      ref={inputRef}
-      value={maskedValue}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      onFocus={handleFocus}
-      onKeyUp={handleKeyUp}
+      {...inputProps}
     />
   );
 };
 
-IntlCurrencyInput.propTypes = {
-  defaultValue: number,
-  value: number,
-  max: number,
-  component: node.isRequired,
-  currency: string.isRequired,
-  config: shape().isRequired,
-  autoFocus: bool.isRequired,
-  autoSelect: bool.isRequired,
-  autoReset: bool.isRequired,
-  onChange: func.isRequired,
-  onBlur: func.isRequired,
-  onFocus: func.isRequired,
-  onKeyPress: func.isRequired,
-};
+IntlCurrencyInput.propTypes = propTypes;
 
-IntlCurrencyInput.defaultProps = {
-  component: 'input',
-  currency: 'USD',
-  value: 0,
-  config: defaultConfig,
-  autoFocus: false,
-  autoSelect: false,
-  autoReset: false,
-  onChange: f => f,
-  onBlur: f => f,
-  onFocus: f => f,
-  onKeyPress: f => f,
-};
+IntlCurrencyInput.defaultProps = defaultProps;
 
 export default IntlCurrencyInput;
